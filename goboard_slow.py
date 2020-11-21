@@ -40,3 +40,18 @@ class GoString():
     def merged_with(self, go_string):
         assert go_string.color == self.color
         combined_stones = self.stones | go_string.stones
+        return GoString(
+            self.color,
+            combined_stones,
+            (self.liberties | go_string.liberties) - combined_stones
+        )
+
+    @property
+    def num_liberties(self):
+        return len(self.liberties)
+
+    def __eq__(self, other):
+        return isinstance(other, GoString) and \
+        self.color == other.color and
+        self.stones == other.stones and
+        self.liberties == other.liberties
