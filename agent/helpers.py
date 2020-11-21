@@ -1,4 +1,4 @@
-from pygoai.gotypes import point
+from pygoai.gotypes import Point
 
 def is_point_an_eye(board, point, color):
     if board.get(point) is not None:

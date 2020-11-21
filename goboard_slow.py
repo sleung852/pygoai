@@ -1,5 +1,5 @@
 import copy
-from dlgo.gotypes import Player
+from pygoai.gotypes import Player
 
 class Move():
     """
@@ -55,8 +55,8 @@ class GoString():
 
     def __eq__(self, other):
         return isinstance(other, GoString) and \
-        self.color == other.color and
-        self.stones == other.stones and
+        self.color == other.color and \
+        self.stones == other.stones and \
         self.liberties == other.liberties
 
 class Board():
@@ -85,7 +85,7 @@ class Board():
                 if neighbor_string not in adjacent_opposite_color:
                     adjacent_opposite_color.append(neighbor_string)
 
-        new_string = GoString(player, [point], liberties
+        new_string = GoString(player, [point], liberties)
         for same_color_string in adjacent_same_color:
             new_string = new_string.merged_with(same_color_string)
         for new_string_point in new_string.stones:
@@ -157,7 +157,7 @@ class GameState():
             return False
         if self.last_move.is_resign:
             return True
-        second_last_move = self.previous_state.second_last_move
+        second_last_move = self.previous_state.last_move
         if second_last_move is None:
             return False
         return self.last_move.is_pass and second_last_move.is_pass

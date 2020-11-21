@@ -8,7 +8,7 @@ class Player(enum.Enum):
     def other(self):
         return Player.black if self == Player.white else Player.white
 
-from collections import nametuple
+from collections import namedtuple
 
 # namedtuple allows access to coordinates as point.row
 # and point.col instead of point[0], point[1]
