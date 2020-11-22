@@ -9,7 +9,7 @@ class Move():
     def __init__(self, point=None, is_pass=False, is_resign=False):
         assert (point is not None) ^ is_pass ^ is_resign
         self.point = point
-        self.is_play = (self.point is None)
+        self.is_play = (self.point is not None)
         self.is_pass = is_pass
         self.is_resign = is_resign
 
@@ -86,6 +86,7 @@ class Board():
                     adjacent_opposite_color.append(neighbor_string)
 
         new_string = GoString(player, [point], liberties)
+
         for same_color_string in adjacent_same_color:
             new_string = new_string.merged_with(same_color_string)
         for new_string_point in new_string.stones:
@@ -129,6 +130,12 @@ class Board():
                     neighbor_string.add_liberty(point)
             # finally remove the stone from board
             self._grid[point] = None
+
+    # def __eq__(self, other):
+    #     return isinstance(other, Board) and \
+    #         self.num_rows == other.num_rows and \
+    #         self.num_cols == other.num_cols and \
+    #         self._grid == other._grid
 
 class GameState():
     def __init__(self, board, next_player, previous, move):
@@ -193,7 +200,28 @@ class GameState():
         if move.is_pass or move.is_resign:
             return True
         return (
-        self.board.get(move.point) is None and
-        not self.is_move_self_capture(self.next_player, move) and
-        not self.does_move_violate_ko(self.next_player, move)
+            self.board.get(move.point) is None and
+            not self.is_move_self_capture(self.next_player, move) and
+            not self.does_move_violate_ko(self.next_player, move)
         )
+
+    def legal_moves(self):
+        moves = []
+        for row in range(1, self.board.num_rows + 1):
+            for col in range(1, self.board.num_cols + 1):
+                move = Move.play(Point(row, col))
+                if self.is_valid_move(move):
+                    moves.append(move)
+        # These two moves are always legal.
+        moves.append(Move.pass_turn())
+        moves.append(Move.resign())
+
+        return moves
+
+    def winner(self):
+        if not self.is_over():
+            return None
+        if self.last_move.is_resign:
+            return self.next_player
+        game_result = compute_game_result(self)
+        return game_result.winner
